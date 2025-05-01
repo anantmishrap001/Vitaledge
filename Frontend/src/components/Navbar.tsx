@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useTheme } from "@/hooks/use-theme";
 import { Moon, Sun } from "lucide-react";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -35,13 +36,21 @@ const Navbar = () => {
             ))}
 
             {/* Login Button */}
-            <Link
+            <header className="p-4 flex justify-end items-center gap-4">
+          <SignedOut>
+          <Link
               to="/login"
               className="bg-white text-purple-800 font-semibold px-4 py-2 rounded-md hover:bg-purple-100 hover:scale-105 transition-all
                          dark:bg-purple-700 dark:text-white dark:hover:bg-purple-600 dark:shadow-md dark:hover:shadow-purple-500/40"
             >
               Login
             </Link>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+        </header>
+
 
             {/* Theme Toggle Button */}
             <Button

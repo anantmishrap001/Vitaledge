@@ -1,3 +1,4 @@
+// pages/Login.tsx
 import { SignIn } from "@clerk/clerk-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -11,20 +12,7 @@ const Login = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <SignIn
-            path="/login"
-            routing="path"
-            signUpUrl={null}
-            redirectUrl="/"
-            afterSignInUrl="/"
-            onlyThirdPartyProviders
-            appearance={{
-              elements: {
-                card: "shadow-none border-none",
-                headerTitle: "text-purple-700 dark:text-purple-300",
-              },
-            }}
-          />
+          <SignIn path="/login" routing="path" />
         </CardContent>
       </Card>
     </div>
