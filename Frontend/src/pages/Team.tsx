@@ -7,10 +7,10 @@ const TeamMember = ({
   prn: string;
   description: string;
 }) => (
-  <div className="bg-white bg-opacity-80 backdrop-blur-md p-6 rounded-2xl shadow-lg hover:scale-105 transform transition duration-300 ease-in-out cursor-pointer hover:shadow-2xl">
-    <h3 className="text-2xl font-bold text-gray-900 mb-2">{name}</h3>
-    <p className="text-gray-700 mb-2 font-semibold">PRN: {prn}</p>
-    <p className="text-gray-600 text-sm">{description}</p>
+  <div className="bg-white dark:bg-black/60 bg-opacity-80 backdrop-blur-md p-6 rounded-2xl shadow-lg hover:scale-105 transform transition duration-300 ease-in-out cursor-pointer hover:shadow-purple-300 dark:hover:shadow-purple-800">
+    <h3 className="text-2xl font-bold text-purple-800 dark:text-purple-300 mb-2">{name}</h3>
+    <p className="text-purple-600 dark:text-purple-400 mb-2 font-semibold">PRN: {prn}</p>
+    <p className="text-gray-700 dark:text-purple-200 text-sm">{description}</p>
   </div>
 );
 
@@ -44,13 +44,13 @@ const Team = () => {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center py-20 px-6"
+      className="min-h-screen bg-cover bg-center py-20 px-6 transition-colors duration-500"
       style={{
-        backgroundImage: "url('/assets/team.jpg')", // << your bg image path
+        backgroundImage: "url('/assets/team.jpg')",
       }}
     >
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-5xl font-bold text-center text-white mb-16 drop-shadow-lg">
+        <h1 className="text-5xl font-bold text-center text-white dark:text-purple-200 mb-16 drop-shadow-lg">
           Meet Our Team
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">

@@ -7,17 +7,14 @@ import numpy as np
 app = Flask(__name__)
 CORS(app)
 
-# Load the trained model
 model = joblib.load('svc.pkl')
 
-# Load datasets
 workout = pd.read_csv('datasets/workout.csv')
 description = pd.read_csv('datasets/description.csv')
 precautions = pd.read_csv('datasets/precautions.csv')
 medications = pd.read_csv('datasets/medications.csv')
 diets = pd.read_csv('datasets/diets.csv')
 
-# Disease list (same order as used during model training)
 disease_list = [
     "Fungal infection", "Allergy", "GERD", "Chronic cholestasis", "Drug Reaction", "Peptic ulcer disease",
     "AIDS", "Diabetes", "Gastroenteritis", "Bronchial Asthma", "Hypertension", "Migraine", "Cervical spondylosis",
@@ -28,7 +25,7 @@ disease_list = [
     "Acne", "Urinary tract infection", "Psoriasis", "Impetigo"
 ]
 
-# Symptom columns (same order as training)
+
 symptom_columns = [
     "itching", "skin_rash", "nodal_skin_eruptions", "continuous_sneezing", "shivering", "chills", "joint_pain",
     "stomach_pain", "acidity", "ulcers_on_tongue", "muscle_wasting", "vomiting", "burning_micturition", "spotting_ urination",
@@ -54,7 +51,7 @@ symptom_columns = [
     "small_dents_in_nails", "inflammatory_nails", "blister", "red_sore_around_nose", "yellow_crust_ooze"
 ]
 
-# Convert to serializable
+
 def convert_to_serializable(data):
     if isinstance(data, np.ndarray):
         return data.tolist()
@@ -63,11 +60,11 @@ def convert_to_serializable(data):
     else:
         return str(data)
 
-# Retrieve info
+
 def helper(disease_name):
     disease_name = str(disease_name).strip().lower()
 
-    # Clean column disease names
+   
     description['Disease'] = description['Disease'].str.strip().str.lower()
     precautions['Disease'] = precautions['Disease'].str.strip().str.lower()
     medications['Disease'] = medications['Disease'].str.strip().str.lower()
@@ -91,7 +88,7 @@ def helper(disease_name):
         "disease": disease_name,
         "description": desc,
         "precautions": pre,
-        "medications": med,
+        "medication": med,
         "diet": die,
         "workout": wrkout
     }

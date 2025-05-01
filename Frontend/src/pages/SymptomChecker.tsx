@@ -33,6 +33,8 @@ const allSymptoms = [
   "red_sore_around_nose", "yellow_crust_ooze"
 ];
 
+// ...imports remain unchanged
+
 const SymptomChecker = () => {
   const [selectedSymptoms, setSelectedSymptoms] = useState<any[]>([]);
   const [diagnosis, setDiagnosis] = useState("");
@@ -66,27 +68,37 @@ const SymptomChecker = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-center py-12 px-4" style={{ backgroundImage: "url('/assets/pranavreddy.jpg')" }}>
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-white to-purple-50 dark:from-black dark:to-neutral-900 py-12 px-4 transition-colors duration-500">
       <div className="max-w-5xl mx-auto">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
-          <Card className="mb-10 bg-white/80 backdrop-blur-md shadow-lg">
+          <Card className="mb-10 bg-white/80 dark:bg-black/70 backdrop-blur-md shadow-2xl border border-purple-300 dark:border-purple-800 transition-colors duration-500">
             <CardHeader className="text-center">
-              <h1 className="text-3xl font-bold text-blue-800 drop-shadow-sm">🩺 Symptom Checker</h1>
-              <p className="text-gray-700 text-sm mt-2">Select your symptoms to get a preliminary diagnosis</p>
+              <h1 className="text-3xl font-bold text-purple-700 dark:text-purple-400 drop-shadow">🩺 Symptom Checker</h1>
+              <p className="text-gray-700 dark:text-purple-200 text-sm mt-2">Select your symptoms to get a preliminary diagnosis</p>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Select at least 3 symptoms:</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-purple-300 mb-2">
+                    Select at least 3 symptoms:
+                  </label>
                   <Select
                     isMulti
-                    options={allSymptoms.map(symptom => ({ value: symptom, label: symptom.replace(/_/g, " ") }))}
+                    options={allSymptoms.map(symptom => ({
+                      value: symptom,
+                      label: symptom.replace(/_/g, " "),
+                    }))}
                     value={selectedSymptoms}
                     onChange={(selected) => setSelectedSymptoms(selected as any[])}
                     className="text-sm"
                   />
                 </div>
-                <Button type="submit" className="w-full text-lg py-2">🔍 Get Diagnosis</Button>
+                <Button
+                  type="submit"
+                  className="w-full text-lg py-2 bg-purple-600 hover:bg-purple-700 text-white dark:bg-purple-500 dark:hover:bg-purple-600 transition"
+                >
+                  🔍 Get Diagnosis
+                </Button>
               </form>
             </CardContent>
           </Card>
@@ -94,57 +106,37 @@ const SymptomChecker = () => {
 
         {showResults && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-            <Card className="bg-white/90 backdrop-blur-md shadow-xl border border-blue-100">
-              <CardHeader className="text-center bg-gradient-to-r from-blue-100 to-blue-200 rounded-t-lg py-6">
-                <CardTitle className="text-2xl text-blue-800 font-semibold">
-                  🧾 Diagnosis Result: <span className="text-blue-900 underline">{diagnosis}</span>
+            <Card className="bg-white/90 dark:bg-black/60 backdrop-blur-md shadow-xl border border-purple-300 dark:border-purple-800 transition">
+              <CardHeader className="text-center bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-800 dark:to-purple-900 rounded-t-lg py-6">
+                <CardTitle className="text-2xl text-purple-800 dark:text-purple-300 font-semibold">
+                  🧾 Diagnosis Result: <span className="underline">{diagnosis}</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-4">
+              <CardContent className="pt-4 text-gray-800 dark:text-purple-200 text-sm">
                 <Tabs defaultValue="description" className="w-full">
                   <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2">
-                    <TabsTrigger value="description"><FileText className="w-4 h-4 mr-1" /> Description</TabsTrigger>
-                    <TabsTrigger value="medication"><FileBox className="w-4 h-4 mr-1" /> Medication</TabsTrigger>
-                    <TabsTrigger value="diet"><Utensils className="w-4 h-4 mr-1" /> Diet</TabsTrigger>
-                    <TabsTrigger value="precautions"><Shield className="w-4 h-4 mr-1" /> Precautions</TabsTrigger>
-                    <TabsTrigger value="workout"><Dumbbell className="w-4 h-4 mr-1" /> Workout</TabsTrigger>
+                    <TabsTrigger value="description">📝 Description</TabsTrigger>
+                    <TabsTrigger value="medication">💊 Medication</TabsTrigger>
+                    <TabsTrigger value="diet">🍽️ Diet</TabsTrigger>
+                    <TabsTrigger value="precautions">🛡️ Precautions</TabsTrigger>
+                    <TabsTrigger value="workout">🏋️ Workout</TabsTrigger>
                   </TabsList>
 
-                  <TabsContent value="description" className="mt-4 text-gray-800 text-sm">
+                  <TabsContent value="description" className="mt-4">
                     <p>{Array.isArray(diagnosisDetails.description) ? diagnosisDetails.description.join(" ") : diagnosisDetails.description}</p>
                   </TabsContent>
 
-                  <TabsContent value="medication">
-                    <ScrollArea className="h-64 p-4 text-sm">
-                      <ul className="list-disc pl-5">
-                        {(diagnosisDetails.medications || []).map((m: string, i: number) => <li key={i}>{m}</li>)}
-                      </ul>
-                    </ScrollArea>
-                  </TabsContent>
-
-                  <TabsContent value="diet">
-                    <ScrollArea className="h-64 p-4 text-sm">
-                      <ul className="list-disc pl-5">
-                        {(diagnosisDetails.diet || []).map((d: string, i: number) => <li key={i}>{d}</li>)}
-                      </ul>
-                    </ScrollArea>
-                  </TabsContent>
-
-                  <TabsContent value="precautions">
-                    <ScrollArea className="h-64 p-4 text-sm">
-                      <ul className="list-disc pl-5">
-                        {(diagnosisDetails.precautions || []).map((p: string, i: number) => <li key={i}>{p}</li>)}
-                      </ul>
-                    </ScrollArea>
-                  </TabsContent>
-
-                  <TabsContent value="workout">
-                    <ScrollArea className="h-64 p-4 text-sm">
-                      <ul className="list-disc pl-5">
-                        {(diagnosisDetails.workout || []).map((w: string, i: number) => <li key={i}>{w}</li>)}
-                      </ul>
-                    </ScrollArea>
-                  </TabsContent>
+                  {["medication", "diet", "precautions", "workout"].map(section => (
+                    <TabsContent key={section} value={section}>
+                      <ScrollArea className="h-64 p-4 text-sm">
+                        <ul className="list-disc pl-5">
+                          {(diagnosisDetails[section] || []).map((item: string, i: number) => (
+                            <li key={i}>{item}</li>
+                          ))}
+                        </ul>
+                      </ScrollArea>
+                    </TabsContent>
+                  ))}
                 </Tabs>
               </CardContent>
             </Card>

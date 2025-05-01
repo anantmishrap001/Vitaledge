@@ -10,52 +10,59 @@ import {
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white dark:from-black dark:to-zinc-900 transition-colors duration-300">
       {/* Hero Section */}
-      <section className="relative h-[600px] flex items-center justify-center">
-        {/* Background Image */}
+      <section className="relative h-[600px] flex items-center justify-center dark:bg-black transition-colors">
         <div
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: "url('/assets/doctorpic.jpg')", // <<< your new image path
+            backgroundImage: "url('/assets/doctorpic.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
-            opacity: 0.3, // make it little transparent for text readability
+            opacity: 0.2,
           }}
         />
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/20 z-0" />
+        <div className="absolute inset-0 bg-black/40 z-0 dark:bg-black/60" />
         
         <div className="container mx-auto px-4 relative z-10 text-center">
-          <div className="max-w-3xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              Your Health Journey Starts Here
-            </h1>
-            <p className="text-xl text-gray-700 mb-8">
-              Get instant preliminary diagnosis and connect with the right healthcare professionals.
-            </p>
-            <div className="flex gap-4 justify-center">
-              <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
-                <Link to="/symptom-checker">Check Symptoms</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link to="/find-doctor">Find a Doctor</Link>
-              </Button>
-            </div>
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 drop-shadow-lg">
+            Your Health Journey Starts Here
+          </h1>
+          <p className="text-xl text-purple-100 dark:text-purple-300 mb-8 drop-shadow-md">
+            Get instant preliminary diagnosis and connect with the right healthcare professionals.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Button
+              asChild
+              size="lg"
+              className="bg-purple-700 hover:bg-purple-800 text-white px-6 py-3 rounded-lg transition-all hover:scale-105"
+            >
+              <Link to="/symptom-checker">Check Symptoms</Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-purple-700 text-purple-700 hover:bg-purple-100 dark:border-purple-300 dark:text-purple-300 dark:hover:bg-purple-900 transition-all hover:scale-105"
+            >
+              <Link to="/find-doctor">Find a Doctor</Link>
+            </Button>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white dark:bg-zinc-900 transition-colors">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">How VitalEdge Helps You</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 text-purple-800 dark:text-purple-300">
+            How VitalEdge Helps You
+          </h2>
           <div className="grid md:grid-cols-2 gap-8">
-            <Card className="transform transition-all hover:scale-105">
+            <Card className="transform transition-all hover:scale-105 hover:shadow-xl dark:bg-zinc-800">
               <CardHeader>
-                <CardTitle>Quick Diagnosis</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-purple-800 dark:text-purple-300">Quick Diagnosis</CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-300">
                   Get instant preliminary diagnosis based on your symptoms
                 </CardDescription>
               </CardHeader>
@@ -68,10 +75,10 @@ const Home = () => {
               </CardContent>
             </Card>
 
-            <Card className="transform transition-all hover:scale-105">
+            <Card className="transform transition-all hover:scale-105 hover:shadow-xl dark:bg-zinc-800">
               <CardHeader>
-                <CardTitle>Find Doctors</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-purple-800 dark:text-purple-300">Find Doctors</CardTitle>
+                <CardDescription className="text-gray-600 dark:text-gray-300">
                   Connect with healthcare professionals near you
                 </CardDescription>
               </CardHeader>
@@ -88,7 +95,7 @@ const Home = () => {
       </section>
 
       {/* About Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white dark:bg-zinc-900 transition-colors">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
@@ -99,16 +106,20 @@ const Home = () => {
               />
             </div>
             <div>
-              <h2 className="text-3xl font-bold mb-6">About VitalEdge</h2>
-              <div className="space-y-4 text-gray-700">
+              <h2 className="text-3xl font-bold mb-6 text-purple-800 dark:text-purple-300">About VitalEdge</h2>
+              <div className="space-y-4 text-gray-700 dark:text-gray-300">
                 <p>
-                  Welcome to VitalEdge — your trusted companion in taking the first step toward better health. At VitalEdge, we have built a platform where you can easily input your symptoms and receive an intelligent, preliminary diagnosis designed to guide you toward the right care.
+                  Welcome to VitalEdge — your trusted companion in taking the first step toward better health.
+                  At VitalEdge, we have built a platform where you can easily input your symptoms and receive
+                  an intelligent, preliminary diagnosis designed to guide you toward the right care.
                 </p>
                 <p>
-                  We are a passionate team of innovators from the Symbiosis Institute of Technology, driven by a vision to make healthcare more accessible, efficient, and user-friendly. Combining our technical expertise with a deep commitment to healthcare innovation, we strive to make VitalEdge a reliable bridge between early diagnosis and professional medical treatment.
+                  We are a passionate team of innovators from the Symbiosis Institute of Technology, driven by a
+                  vision to make healthcare more accessible, efficient, and user-friendly.
                 </p>
                 <p>
-                  At VitalEdge, we believe that quick access to the right medical guidance can change lives. Our journey has just begun, and we are dedicated to continuously evolving, learning, and building a healthier tomorrow — with you at the center of everything we do.
+                  Our journey has just begun, and we are dedicated to continuously evolving, learning,
+                  and building a healthier tomorrow — with you at the center of everything we do.
                 </p>
               </div>
             </div>
@@ -117,13 +128,19 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-primary/10 to-secondary/10">
+      <section className="py-20 bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-900 dark:to-black transition-colors">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to Take Control of Your Health?</h2>
-          <p className="text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold mb-6 text-purple-900 dark:text-purple-200">
+            Ready to Take Control of Your Health?
+          </h2>
+          <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
             Join VitalEdge today and get instant access to our symptom checker and healthcare professional network.
           </p>
-          <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
+          <Button
+            asChild
+            size="lg"
+            className="bg-purple-700 hover:bg-purple-800 text-white px-6 py-3 rounded-lg transition-all hover:scale-105"
+          >
             <Link to="/signup">Get Started</Link>
           </Button>
         </div>
