@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 import pandas as pd
 import joblib
 from flask_cors import CORS
+import numpy as np
+
 
 app = Flask(__name__)
 CORS(app)  # Enables CORS for all routes
@@ -9,10 +11,14 @@ CORS(app)  # Enables CORS for all routes
 # Load the trained model
 model = joblib.load('svc.pkl')
 
-# Load workout CSV file
+# Load datasets
 workout = pd.read_csv('D:/College 6th sem/PBL/Vitaledge/Backend/datasets/workout.csv')
+description = pd.read_csv('D:/College 6th sem/PBL/Vitaledge/Backend/datasets/description.csv')
+precautions = pd.read_csv('D:/College 6th sem/PBL/Vitaledge/Backend/datasets/precautions.csv')
+medications = pd.read_csv('D:/College 6th sem/PBL/Vitaledge/Backend/datasets/medications.csv')
+diets = pd.read_csv('D:/College 6th sem/PBL/Vitaledge/Backend/datasets/diets.csv')
 
-# List of all symptoms
+# All symptom columns
 symptom_columns = [
     "itching", "skin_rash", "nodal_skin_eruptions", "continuous_sneezing", "shivering", "chills", "joint_pain",
     "stomach_pain", "acidity", "ulcers_on_tongue", "muscle_wasting", "vomiting", "burning_micturition",
@@ -38,36 +44,80 @@ symptom_columns = [
     "skin_peeling", "silver_like_dusting", "small_dents_in_nails", "inflammatory_nails", "blister",
     "red_sore_around_nose", "yellow_crust_ooze"
 ]
+def process_value(x):
+    if isinstance(x, str):
+        return x.strip()
+    else:
+        print(f"Non-string value encountered: {x}")
+        return str(x)
+    
+def helper(disease_name):
+    disease_name = str(disease_name).strip().lower()
 
-# Helper function to get workout and prediction
-def helper(dis):
-    wrkout_series = workout[workout['disease'] == dis]['workout']
-    wrkout_list = wrkout_series.tolist()
+    # Check if disease_name is empty
+    if not disease_name:
+        return {"error": "Invalid disease name"}
 
-    # If there's at least one workout, return it; else, fallback message
-    wrkout = wrkout_list[0] if wrkout_list else "No workout recommendation available."
+    # Ensure the DataFrames are cleaned (strip spaces)
+    description['Disease'] = description['Disease'].str.strip().str.lower()
 
-    return {
-        'prediction': dis,
-        'workout': wrkout
-    }
+    # Search for the disease in the description DataFrame
+    desc = description[description['Disease'] == disease_name]['Description'].values
 
-# Predict route
+    if not desc.size:
+        return {"error": f"Description not found for disease: {disease_name}"}
+
+    pre = precautions[precautions['Disease'].str.lower() == disease_name][['Precaution_1', 'Precaution_2', 'Precaution_3', 'Precaution_4']].values
+    if not pre.size:
+        return {"error": f"Precautions not found for disease: {disease_name}"}
+
+    med = medications[medications['Disease'].str.lower() == disease_name]['Medication'].dropna().tolist()
+    if not med:
+        return {"error": f"Medications not found for disease: {disease_name}"}
+
+    die = diets[diets['Disease'].str.lower() == disease_name]['Diet'].dropna().tolist()
+    if not die:
+        return {"error": f"Diets not found for disease: {disease_name}"}
+
+    wrkout = workout[workout['disease'].str.lower() == disease_name]['workout'].dropna().tolist()
+    if not wrkout:
+        return {"error": f"Workout information not found for disease: {disease_name}"}
+
+    # Convert numpy types to native Python types
+    def convert_to_serializable(data):
+        if isinstance(data, np.ndarray):
+            return [item.item() if isinstance(item, np.int32) else item for item in data]
+        elif isinstance(data, list):
+            return [item if isinstance(item, (int, str)) else item.item() for item in data]
+        else:
+            return data.item() if isinstance(data, np.int32) else data
+    
+    # Apply conversion for each list/array
+    desc = convert_to_serializable(desc)
+    pre = convert_to_serializable(pre)
+    med = convert_to_serializable(med)
+    die = convert_to_serializable(die)
+    wrkout = convert_to_serializable(wrkout)
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        data = request.json
-        inputs = [data.get(symptom, 0) for symptom in symptom_columns]  # Default to 0 if symptom not present
-        
-        # Ensure inputs are in the correct shape for the model
+        data = request.get_json()
+        print("🟢 Incoming Data:", data)
+
+        symptoms = data.get("symptoms", [])
+        inputs = [1 if symptom in symptoms else 0 for symptom in symptom_columns]
+        print("🧠 Model input vector:", inputs)
+
         prediction = model.predict([inputs])[0]
+        print("🩺 Predicted Disease:", prediction)
+
         response = helper(prediction)
         return jsonify(response)
-    
+
     except Exception as e:
-        print(f"Error: {e}")  # Log the error in the terminal
+        print(f"❌ Backend Error: {e}")
         return jsonify({'error': str(e)}), 500
 
-# Run the Flask app
 if __name__ == '__main__':
     app.run(debug=True)

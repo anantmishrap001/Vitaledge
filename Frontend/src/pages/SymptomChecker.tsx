@@ -1,3 +1,4 @@
+// Updated SymptomChecker.tsx
 import { useState } from "react";
 import Select from "react-select";
 import { Button } from "@/components/ui/button";
@@ -36,13 +37,7 @@ const SymptomChecker = () => {
   const [selectedSymptoms, setSelectedSymptoms] = useState<any[]>([]);
   const [diagnosis, setDiagnosis] = useState("");
   const [showResults, setShowResults] = useState(false);
-  const [diagnosisDetails, setDiagnosisDetails] = useState({
-    description: "",
-    medications: [],
-    dietRecommendations: [],
-    precautions: [],
-    workouts: []
-  });
+  const [diagnosisDetails, setDiagnosisDetails] = useState<any>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,8 +46,6 @@ const SymptomChecker = () => {
       alert("Please select at least 3 symptoms.");
       return;
     }
-
-    
 
     try {
       const response = await fetch("http://localhost:5000/predict", {
@@ -64,27 +57,19 @@ const SymptomChecker = () => {
       });
 
       const data = await response.json();
+      if (data.error) throw new Error(data.error);
 
       setDiagnosis(data.predicted_disease);
-      setDiagnosisDetails({
-        description: data.description,
-        medications: data.medications,
-        dietRecommendations: data.diets,
-        precautions: data.precautions,
-        workouts: data.workouts
-      });
+      setDiagnosisDetails(data);
       setShowResults(true);
-    } catch (error) {
-      console.error("Error fetching diagnosis:", error);
-      alert("Failed to fetch diagnosis. Please check server connection.");
+    } catch (error: any) {
+      console.error("❌ Frontend Fetch Error:", error.message);
+      alert("Diagnosis failed: " + error.message);
     }
   };
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center py-12 transition-colors duration-300"
-      style={{ backgroundImage: "url('/assets/pranavreddy.jpg')" }}
-    >
+    <div className="min-h-screen bg-cover bg-center py-12" style={{ backgroundImage: "url('/assets/pranavreddy.jpg')" }}>
       <div className="max-w-4xl mx-auto px-4">
         <Card className="mb-8 bg-white/80 backdrop-blur-md shadow-md">
           <CardHeader>
@@ -93,20 +78,12 @@ const SymptomChecker = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Select your symptoms (min. 3):
-                </label>
+                <label className="block text-sm font-medium mb-2">Select your symptoms (min. 3):</label>
                 <Select
                   isMulti
-                  name="symptoms"
-                  options={allSymptoms.map(symptom => ({
-                    value: symptom,
-                    label: symptom.replace(/_/g, " ")
-                  }))}
+                  options={allSymptoms.map(symptom => ({ value: symptom, label: symptom.replace(/_/g, " ") }))}
                   value={selectedSymptoms}
                   onChange={(selected) => setSelectedSymptoms(selected as any[])}
-                  className="basic-multi-select"
-                  classNamePrefix="select"
                 />
               </div>
               <Button type="submit" className="w-full">Get Diagnosis</Button>
@@ -120,104 +97,37 @@ const SymptomChecker = () => {
               <CardTitle className="text-xl font-bold">Preliminary Diagnosis: {diagnosis}</CardTitle>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="description" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-4">
-                  <TabsTrigger value="description" className="flex items-center gap-2">
-                    <FileText className="w-4 h-4" />
-                    Description
-                  </TabsTrigger>
-                  <TabsTrigger value="medication" className="flex items-center gap-2">
-                    <FileBox className="w-4 h-4" />
-                    Medication
-                  </TabsTrigger>
-                  <TabsTrigger value="diet" className="flex items-center gap-2">
-                    <Utensils className="w-4 h-4" />
-                    Diet
-                  </TabsTrigger>
-                  <TabsTrigger value="precautions" className="flex items-center gap-2">
-                    <Shield className="w-4 h-4" />
-                    Precautions
-                  </TabsTrigger>
-                  <TabsTrigger value="workout" className="flex items-center gap-2">
-                    <Dumbbell className="w-4 h-4" />
-                    Workout
-                  </TabsTrigger>
+              <Tabs defaultValue="description">
+                <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <TabsTrigger value="description"><FileText className="w-4 h-4" /> Description</TabsTrigger>
+                  <TabsTrigger value="medication"><FileBox className="w-4 h-4" /> Medication</TabsTrigger>
+                  <TabsTrigger value="diet"><Utensils className="w-4 h-4" /> Diet</TabsTrigger>
+                  <TabsTrigger value="precautions"><Shield className="w-4 h-4" /> Precautions</TabsTrigger>
+                  <TabsTrigger value="workout"><Dumbbell className="w-4 h-4" /> Workout</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="description" className="mt-6">
-                  <Card>
-                    <CardContent className="pt-6">
-                      <p className="text-foreground">{diagnosisDetails.description}</p>
-                    </CardContent>
-                  </Card>
+                <TabsContent value="description">
+                  <p className="pt-4">{diagnosisDetails.description}</p>
                 </TabsContent>
-
-                <TabsContent value="medication" className="mt-6">
-                  <Card>
-                    <CardContent className="pt-6">
-                      <ScrollArea className="h-[300px] rounded-md border p-4">
-                        <ul className="space-y-4">
-                          {diagnosisDetails.medications.map((medication, index) => (
-                            <li key={index} className="flex items-start gap-2">
-                              <span className="mt-1">•</span>
-                              <span>{medication}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </ScrollArea>
-                    </CardContent>
-                  </Card>
+                <TabsContent value="medication">
+                  <ScrollArea className="h-64 p-4">
+                    <ul>{(diagnosisDetails.medications || []).map((m: string, i: number) => <li key={i}>• {m}</li>)}</ul>
+                  </ScrollArea>
                 </TabsContent>
-
-                <TabsContent value="diet" className="mt-6">
-                  <Card>
-                    <CardContent className="pt-6">
-                      <ScrollArea className="h-[300px] rounded-md border p-4">
-                        <ul className="space-y-4">
-                          {diagnosisDetails.dietRecommendations.map((diet, index) => (
-                            <li key={index} className="flex items-start gap-2">
-                              <span className="mt-1">•</span>
-                              <span>{diet}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </ScrollArea>
-                    </CardContent>
-                  </Card>
+                <TabsContent value="diet">
+                  <ScrollArea className="h-64 p-4">
+                    <ul>{(diagnosisDetails.diets || []).map((d: string, i: number) => <li key={i}>• {d}</li>)}</ul>
+                  </ScrollArea>
                 </TabsContent>
-
-                <TabsContent value="precautions" className="mt-6">
-                  <Card>
-                    <CardContent className="pt-6">
-                      <ScrollArea className="h-[300px] rounded-md border p-4">
-                        <ul className="space-y-4">
-                          {diagnosisDetails.precautions.map((precaution, index) => (
-                            <li key={index} className="flex items-start gap-2">
-                              <span className="mt-1">•</span>
-                              <span>{precaution}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </ScrollArea>
-                    </CardContent>
-                  </Card>
+                <TabsContent value="precautions">
+                  <ScrollArea className="h-64 p-4">
+                    <ul>{(diagnosisDetails.precautions || []).map((p: string, i: number) => <li key={i}>• {p}</li>)}</ul>
+                  </ScrollArea>
                 </TabsContent>
-
-                <TabsContent value="workout" className="mt-6">
-                  <Card>
-                    <CardContent className="pt-6">
-                      <ScrollArea className="h-[300px] rounded-md border p-4">
-                        <ul className="space-y-4">
-                          {diagnosisDetails.workouts.map((workout, index) => (
-                            <li key={index} className="flex items-start gap-2">
-                              <span className="mt-1">•</span>
-                              <span>{workout}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </ScrollArea>
-                    </CardContent>
-                  </Card>
+                <TabsContent value="workout">
+                  <ScrollArea className="h-64 p-4">
+                    <ul>{(diagnosisDetails.workouts || []).map((w: string, i: number) => <li key={i}>• {w}</li>)}</ul>
+                  </ScrollArea>
                 </TabsContent>
               </Tabs>
             </CardContent>
